@@ -33,17 +33,18 @@ Documents → Text Chunking → Embeddings → Vector Database → Retriever →
 ---
 
 ## Project Structure
-multi-doc-rag-bot
-│
-├── app.py
-├── rag_pipeline.py
-├── loaders.py
-├── config.py
-├── requirements.txt
-├── README.md
-│
-├── data/
-└── vector_store/
+    
+    multi-doc-rag-bot
+    │
+    ├── app.py
+    ├── rag_pipeline.py
+    ├── loaders.py
+    ├── config.py
+    ├── requirements.txt
+    ├── README.md
+    │
+    ├── data/
+    └── vector_store/
 
 
 ---
@@ -51,7 +52,7 @@ multi-doc-rag-bot
 ## Installation
 Clone the repository
 
-git clone https://github.com/yourusername/multi-doc-rag-bot.git
+git clone https://github.com/kumarsanchit269-op/Multi-doc-QA-bot.git
 
 cd multi-doc-rag-bot
 
@@ -65,6 +66,7 @@ venv\Scripts\activate
 
 
 ## Install dependencies
+
 pip install -r requirements.txt
 
 
@@ -79,9 +81,7 @@ OPENAI_API_KEY=your_api_key_here
 
 ## Run the Application
 
-
 streamlit run app.py
-
 
 Open browser:
 
@@ -124,5 +124,4 @@ http://localhost:8501
 ## Author
 
 Sanchit Kumar  
-BCA AI/ML Student  
-Aspiring AI Engineer
+AI/ML Student | Aspiring AI Engineer
