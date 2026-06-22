@@ -1,8 +1,13 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores import FAISS
 
-from config import CHUNK_SIZE, CHUNK_OVERLAP, EMBEDDING_MODEL, LLM_MODEL
+from config import (
+CHUNK_SIZE,
+CHUNK_OVERLAP,
+EMBEDDING_MODEL,
+LLM_MODEL
+)
 
 def build_vector_store(documents):
 
@@ -13,19 +18,23 @@ def build_vector_store(documents):
 
     chunks = splitter.split_documents(documents)
 
-    embeddings = OpenAIEmbeddings(model=EMBEDDING_MODEL)
+    embeddings = OpenAIEmbeddings(
+        model=EMBEDDING_MODEL
+    )
 
-    vector_store = Chroma.from_documents(
+    vector_store = FAISS.from_documents(
         chunks,
-        embeddings,
-        persist_directory="vector_store"
+        embeddings
     )
 
     return vector_store
 
 def get_answer(vector_store, question):
 
-    retriever = vector_store.as_retriever()
+
+    retriever = vector_store.as_retriever(
+        search_kwargs={"k": 4}
+    )
 
     docs = retriever.invoke(question)
 
@@ -39,9 +48,11 @@ def get_answer(vector_store, question):
     )
 
     prompt = f"""
-    ```
     
-    You are an AI assistant answering questions based only on the provided documents.
+    You are an AI assistant answering questions strictly from the provided document context.
+    
+    If the answer is not present in the context, say:
+    "I could not find that information in the uploaded documents."
     
     Context:
     {context}
@@ -52,12 +63,15 @@ def get_answer(vector_store, question):
     Answer:
     """
 
+
     response = llm.invoke(prompt)
 
     sources = []
 
     for doc in docs:
-        if "source" in doc.metadata:
-            sources.append(doc.metadata["source"])
+        source = doc.metadata.get("source")
 
-    return response.content, list(set(sources))
+        if source and source not in sources:
+            sources.append(source)
+
+    return response.content, sources

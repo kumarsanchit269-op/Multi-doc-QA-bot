@@ -2,21 +2,26 @@ from langchain_community.document_loaders import PyPDFLoader
 import os
 
 def load_documents(uploaded_files):
-
     docs = []
 
     os.makedirs("data", exist_ok=True)
 
-    for file in uploaded_files:
+    for uploaded_file in uploaded_files:
 
-        path = os.path.join("data", file.name)
+        file_path = os.path.join(
+            "data",
+            uploaded_file.name
+        )
 
-        with open(path, "wb") as f:
-            f.write(file.getbuffer())
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
 
-        loader = PyPDFLoader(path)
+        loader = PyPDFLoader(file_path)
 
         documents = loader.load()
+
+        for doc in documents:
+            doc.metadata["source"] = uploaded_file.name
 
         docs.extend(documents)
 
