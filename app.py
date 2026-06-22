@@ -31,8 +31,7 @@ if uploaded_files:
 
         answer, sources = get_answer(
             vector_store,
-            question,
-            st.session_state.chat_history
+            question
         )
 
         st.session_state.chat_history.append((question, answer))
@@ -40,5 +39,7 @@ if uploaded_files:
         st.write(answer)
 
         st.write("### Sources")
+        if sources:
+            st.write("### Sources")
         for s in sources:
-            st.write(s)
+            st.write(f"- {s}")

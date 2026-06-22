@@ -4,7 +4,6 @@ from langchain_community.vectorstores import Chroma
 
 from config import CHUNK_SIZE, CHUNK_OVERLAP, EMBEDDING_MODEL, LLM_MODEL
 
-
 def build_vector_store(documents):
 
     splitter = RecursiveCharacterTextSplitter(
@@ -24,14 +23,15 @@ def build_vector_store(documents):
 
     return vector_store
 
-
 def get_answer(vector_store, question):
 
     retriever = vector_store.as_retriever()
 
-    docs = retriever.get_relevant_documents(question)
+    docs = retriever.invoke(question)
 
-    context = "\n\n".join([doc.page_content for doc in docs])
+    context = "\n\n".join(
+        [doc.page_content for doc in docs]
+    )
 
     llm = ChatOpenAI(
         model=LLM_MODEL,
@@ -39,17 +39,25 @@ def get_answer(vector_store, question):
     )
 
     prompt = f"""
-You are an AI assistant answering questions based on documents.
-
-Context:
-{context}
-
-Question:
-{question}
-
-Answer clearly using only the provided context.
-"""
+    ```
+    
+    You are an AI assistant answering questions based only on the provided documents.
+    
+    Context:
+    {context}
+    
+    Question:
+    {question}
+    
+    Answer:
+    """
 
     response = llm.invoke(prompt)
 
-    return response.content
+    sources = []
+
+    for doc in docs:
+        if "source" in doc.metadata:
+            sources.append(doc.metadata["source"])
+
+    return response.content, list(set(sources))
