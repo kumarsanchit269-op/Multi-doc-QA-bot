@@ -86,7 +86,7 @@ streamlit run app.py
 Open browser:
 
 
-http://localhost:8501
+https://multi-doc-app-bot-dgudth5vcq8qygzw5gawyu.streamlit.app/
 
 
 ---
